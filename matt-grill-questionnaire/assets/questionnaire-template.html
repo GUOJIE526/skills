@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="questionnaire-key" content="replace-with-a-unique-storage-key">
-  <title>請替換成問卷標題</title>
+  <title>Matt grill 決策問卷</title>
   <style>
     :root {
       --ground: #f4f4f1;
@@ -93,6 +92,8 @@
     .question-id { padding: 3px 8px; border-radius: 5px; background: var(--accent-wash); color: var(--accent); }
     .question-kind { color: var(--ink-soft); font-size: 13px; }
     .case { margin: 18px 0; }
+    .context { margin: 12px 0 0; padding-left: 21px; color: var(--ink-mid); }
+    .context li { margin: 5px 0; }
     .case-label { display: block; margin-bottom: 6px; color: var(--accent); font-size: 13px; font-weight: 700; }
     fieldset { margin: 20px 0 0; padding: 0; border: 0; }
     legend { margin-bottom: 10px; color: var(--ink-mid); font-size: 14px; }
@@ -114,6 +115,12 @@
     .status { min-height: 24px; margin: 10px 0 0; color: var(--good); font-size: 14px; }
     .status.missing { color: var(--warn); }
     code { padding: 1px 4px; border-radius: 4px; background: var(--surface-2); font-family: var(--font-mono); font-size: .9em; }
+    .notice { margin: 14px 0 0; padding: 14px 16px; border: 1px solid var(--warn); border-radius: 10px; background: var(--surface-2); color: var(--warn); font-size: 15px; }
+    .notice strong { color: var(--warn); }
+    .fatal { margin: 52px 0; padding: 26px 24px; border: 1px solid var(--warn); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+    .fatal .eyebrow { color: var(--warn); }
+    .fatal-list { margin: 0 0 20px; padding-left: 22px; color: var(--ink-mid); }
+    .fatal-list li { margin: 9px 0; }
     @media (max-width: 560px) {
       header { padding-top: 34px; }
       h1 { font-size: 27px; }
@@ -133,25 +140,18 @@
   <div class="wrap">
     <header>
       <p class="eyebrow">Matt grill · 決策問卷</p>
-      <h1>請替換成問卷標題</h1>
-      <p class="lede">請替換成這次 grill 的背景、目前已知事實，以及為什麼需要使用者做決定。</p>
-      <div class="howto">請逐題回答。必要決策會標示為<strong>必答</strong>；工程作法若沒有意見，可以採用頁面標示的建議。完成後按下方的<strong>整理回復 prompt</strong>，再複製回對話。</div>
+      <h1 id="title"></h1>
+      <p class="lede" id="lede"></p>
+      <div class="howto">請逐題回答。若沒有意見，可以直接選頁面標示的<strong>建議</strong>；<strong>留白會被視為待確認，不會自動採用建議</strong>。也可以只填補充說明，由我依你的說明判斷。完成後按下方的<strong>整理回復 prompt</strong>，再複製回對話。</div>
+      <p class="notice" id="no-persist" hidden>這個瀏覽器不會保存草稿：重新整理或關閉頁面後，已填的答案會消失。請一次答完，或隨時先按下方的<strong>整理回復 prompt</strong> 把目前進度複製起來。</p>
     </header>
 
-    <hr class="sep">
-
-    <section aria-labelledby="recap-title">
+    <section id="recap-section" aria-labelledby="recap-title" hidden>
+      <hr class="sep">
       <div class="section-head">
         <h2 id="recap-title">目前已確認</h2>
-        <span class="meta">可依 grill context 調整</span>
       </div>
-      <p class="section-lede">把已經確認的前提放在這裡，讓使用者只需回答真正還沒定案的部分。</p>
-      <div class="recap">
-        <ul>
-          <li>請替換成已確認的決策；若沒有，刪除這個列表或改成「目前沒有先前決定」。</li>
-          <li>保留必要的檔案、symbol、API、資料欄位或限制，避免問題脫離實際上下文。</li>
-        </ul>
-      </div>
+      <div class="recap"><ul id="recap-list"></ul></div>
     </section>
 
     <hr class="sep">
@@ -159,43 +159,13 @@
     <main id="questions" aria-label="待回答問題">
       <div class="section-head">
         <h2>需要你的決定</h2>
-        <span class="meta">請替換並增刪 question cards</span>
+        <span class="meta" id="question-meta"></span>
       </div>
-      <p class="section-lede">每張卡片都應讓使用者知道情境、選項差異與選擇後果；問題數量依本次 grill 的實際決策範圍調整。</p>
-
-      <!-- Replace this sample card. Add one .question section per decision. -->
-      <section class="question" data-q="q1" data-title="請替換成第一個決策標題" data-required="true" data-recommendation="請替換成有證據支持的建議">
-        <div class="question-head">
-          <span class="question-id">Q1</span>
-          <span class="question-kind">必答 · 請替換</span>
-        </div>
-        <h3>請替換成一個需要使用者決定的具體問題？</h3>
-        <p>先描述目前已知的行為與限制。讓使用者知道這不是偏好題，而是會改變功能、契約、資料或流程的決定。</p>
-        <div class="case">
-          <span class="case-label">實際情境</span>
-          <p>請補上一個最小、具體、可想像的案例，並說明不同選擇會造成什麼結果。</p>
-        </div>
-        <fieldset>
-          <legend>請選擇一個答案</legend>
-          <label class="option">
-            <input type="radio" name="q1" value="A｜請替換成選項 A">
-            <span><span class="option-title"><span class="option-key">A</span>請替換成選項 A</span><span class="option-note">請說明選項 A 的影響、代價與適用條件。</span></span>
-          </label>
-          <label class="option">
-            <input type="radio" name="q1" value="B｜請替換成選項 B">
-            <span><span class="option-title"><span class="option-key">B</span>請替換成選項 B <span class="recommendation">我的建議</span></span><span class="option-note">請說明為什麼這是建議，以及它避開了什麼風險。</span></span>
-          </label>
-        </fieldset>
-        <div class="note-wrap">
-          <label class="note-label" for="note-q1">補充說明（可不填）</label>
-          <textarea id="note-q1" data-note="q1" placeholder="使用者可以補充實務限制、例外或團隊決定"></textarea>
-        </div>
-      </section>
     </main>
 
     <section class="output" aria-labelledby="output-title">
       <h2 id="output-title">產生回復 prompt</h2>
-      <p>完成選擇後，按「整理回復 prompt」。即使有未回答項目，也可以先產生草稿；必要決策會在 prompt 中清楚列出。</p>
+      <p>完成選擇後，按「整理回復 prompt」。即使有未回答項目，也可以先產生草稿；必答題會在 prompt 中清楚列出。</p>
       <div class="button-row">
         <button type="button" id="generate">整理回復 prompt</button>
         <button type="button" class="secondary" id="copy">複製回復 prompt</button>
@@ -206,33 +176,296 @@
     </section>
   </div>
 
+  <script id="questionnaire-data" type="application/json">
+{
+  "title": "範例：尚未注入問卷資料",
+  "lede": "這是模板的預設內容。實際使用時，建置腳本會把這段 JSON 換成本次 grill 的問卷資料。",
+  "storageKey": "matt-grill-questionnaire:sample",
+  "recap": [],
+  "questions": [
+    {
+      "id": "q1",
+      "title": "範例問題標題",
+      "required": true,
+      "context": ["現況：目前的行為與限制。", "契約：已經講好的規則。"],
+      "scenario": "一個最小、具體、可想像的案例。",
+      "recommendation": "B",
+      "options": [
+        { "key": "A", "title": "選項 A", "note": "選項 A 的影響與代價。" },
+        { "key": "B", "title": "選項 B", "note": "為什麼建議這個做法。" }
+      ]
+    }
+  ]
+}
+  </script>
+
   <script>
     (function () {
-      var meta = document.querySelector('meta[name="questionnaire-key"]');
-      var storageKey = (meta && meta.content) || ('questionnaire:' + location.pathname);
+      // The payload is validated here and nowhere else. Windows and macOS share no
+      // out-of-the-box scripting runtime, so the build scripts cannot run a common
+      // validator — but the browser is always present, or the questionnaire is
+      // pointless. See docs/adr/0001-only-out-of-the-box-runtimes.md.
+      var DATA = null;
+      var problems = [];
+      try {
+        DATA = JSON.parse(document.getElementById('questionnaire-data').textContent);
+      } catch (parseError) {
+        problems.push('payload 不是合法的 JSON：' + parseError.message);
+      }
+      if (DATA) problems = validate(DATA);
+      if (problems.length) { renderFatal(problems); return; }
 
-      function questions() {
-        return Array.prototype.slice.call(document.querySelectorAll('.question[data-q]'));
+      var QUESTIONS = DATA.questions;
+      var storageKey = DATA.storageKey || ('matt-grill-questionnaire:' + location.pathname);
+
+      function isArray(value) {
+        return Object.prototype.toString.call(value) === '[object Array]';
       }
 
-      function selected(section) {
-        var radio = section.querySelector('input[type="radio"]:checked');
+      // Every payload string is rendered with textContent, so markup is printed
+      // instead of applied. Only the purely typographic tags are caught: a grill
+      // may legitimately be about <div> or <script>, but never about <br>.
+      // The pattern lives inline because validate() runs above these declarations
+      // — a hoisted var would still be undefined by then.
+      function scanMarkup(value, path, found) {
+        if (typeof value === 'string') {
+          if (/<\/?(?:br|strong|em|b|i|u)\s*\/?>/i.test(value)) {
+            found.push(path + ' 夾帶了 HTML 標籤。所有文字都以純文字顯示，標籤會原樣印在頁面上；'
+              + '要分段請拆成多個 context 條目，不要用 <br> 或 <strong> 排版。');
+          }
+          return;
+        }
+        if (value && typeof value === 'object') {
+          var array = isArray(value);
+          Object.keys(value).forEach(function (key) {
+            scanMarkup(value[key], path + (array ? '[' + key + ']' : '.' + key), found);
+          });
+        }
+      }
+
+      // Collect every problem rather than stopping at the first — one round trip
+      // beats making the agent rebuild once per mistake.
+      function validate(data) {
+        var found = [];
+        scanMarkup(data, 'payload', found);
+
+        var questions = data && data.questions;
+        if (!isArray(questions)) { found.push('payload 的 questions 必須是陣列。'); return found; }
+        if (!questions.length) { found.push('payload 沒有任何問題（questions 是空的）。'); return found; }
+
+        var seen = {};
+        questions.forEach(function (question, index) {
+          var at = 'questions[' + index + ']';
+          var id = question && question.id;
+          if (!id) { found.push(at + ' 沒有 id。'); return; }
+
+          var label = at + '（' + id + '）';
+          if (Object.prototype.hasOwnProperty.call(seen, id)) {
+            found.push(label + ' 的 id 和前面的題目重複。');
+          }
+          seen[id] = true;
+
+          // A decision without a concrete situation is not answerable.
+          if (!question.scenario) {
+            found.push(label + ' 沒有 scenario；請給一個具體情境，說明不同選擇會走向什麼結果。');
+          }
+
+          // One short line per fact. A single prose blob is what makes agents
+          // reach for <br> to break it up again.
+          if (question.context != null && !isArray(question.context)) {
+            found.push(label + ' 的 context 必須是字串陣列，一則一句話，不是一整段文字。');
+          }
+
+          var options = isArray(question.options) ? question.options : [];
+          if (options.length < 2) {
+            found.push(label + ' 至少要有兩個可區分的選項，目前只有 ' + options.length + ' 個。');
+          }
+          options.forEach(function (option, optionIndex) {
+            if (!option || !option.key || !option.title) {
+              found.push(label + ' 的 options[' + optionIndex + '] 缺少 key 或 title。');
+            }
+          });
+
+          if (question.recommendation) {
+            var matched = options.some(function (option) {
+              return option && option.key === question.recommendation;
+            });
+            if (!matched) {
+              found.push(label + ' 的 recommendation 是「' + question.recommendation
+                + '」，但沒有任何選項使用這個 key。');
+            }
+          }
+        });
+        return found;
+      }
+
+      function renderFatal(list) {
+        document.title = '問卷資料有誤 · Matt grill';
+        var bar = document.querySelector('.bar');
+        if (bar) bar.hidden = true;
+
+        var wrap = document.querySelector('.wrap');
+        wrap.textContent = '';
+
+        var box = el('section', 'fatal');
+        box.appendChild(el('p', 'eyebrow', 'Matt grill · 問卷資料有誤'));
+        box.appendChild(el('h1', null, '這份問卷沒有產生出來'));
+        box.appendChild(el('p', 'lede', 'payload 有下列問題，所以問卷完全沒有渲染——'
+          + '一份只能答一半的問卷比明確的錯誤更難處理。把下面整段貼回對話，修正 payload 後重新建置即可。'));
+
+        var ul = el('ul', 'fatal-list');
+        list.forEach(function (item) { ul.appendChild(el('li', null, item)); });
+        box.appendChild(ul);
+
+        var label = el('label', 'note-label', '可複製的錯誤說明');
+        label.setAttribute('for', 'fatal-copy');
+        box.appendChild(label);
+        var output = document.createElement('textarea');
+        output.id = 'fatal-copy';
+        output.readOnly = true;
+        output.value = '問卷 payload 有下列問題，請修正後重新建置：\n'
+          + list.map(function (item) { return '- ' + item; }).join('\n');
+        box.appendChild(output);
+
+        wrap.appendChild(box);
+      }
+
+      function el(tag, className, text) {
+        var node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text != null) node.textContent = text;
+        return node;
+      }
+
+      function recommendedOption(question) {
+        var options = question.options || [];
+        for (var i = 0; i < options.length; i++) {
+          if (question.recommendation && options[i].key === question.recommendation) return options[i];
+        }
+        return null;
+      }
+
+      function optionLabel(option) {
+        return option.key + '｜' + option.title;
+      }
+
+      function renderHead() {
+        document.getElementById('title').textContent = DATA.title || 'Matt grill 決策問卷';
+        document.title = DATA.title || 'Matt grill 決策問卷';
+        var lede = document.getElementById('lede');
+        if (DATA.lede) lede.textContent = DATA.lede; else lede.hidden = true;
+
+        var recap = DATA.recap || [];
+        if (recap.length) {
+          var list = document.getElementById('recap-list');
+          recap.forEach(function (item) { list.appendChild(el('li', null, item)); });
+          document.getElementById('recap-section').hidden = false;
+        }
+
+        var required = QUESTIONS.filter(function (q) { return q.required !== false; }).length;
+        document.getElementById('question-meta').textContent =
+          QUESTIONS.length + ' 題 · 必答 ' + required + ' 題';
+      }
+
+      function renderQuestion(question, index) {
+        var required = question.required !== false;
+        var section = el('section', 'question' + (required ? '' : ' optional'));
+        section.setAttribute('data-q', question.id);
+
+        var head = el('div', 'question-head');
+        head.appendChild(el('span', 'question-id', String(question.id).toUpperCase()));
+        head.appendChild(el('span', 'question-kind', required ? '必答 · 影響行為或契約' : '選答 · 留白仍會列為待確認'));
+        section.appendChild(head);
+
+        section.appendChild(el('h3', null, question.title));
+
+        var context = isArray(question.context) ? question.context : [];
+        if (context.length) {
+          var list = el('ul', 'context');
+          context.forEach(function (line) { list.appendChild(el('li', null, line)); });
+          section.appendChild(list);
+        }
+
+        if (question.scenario) {
+          var box = el('div', 'case');
+          box.appendChild(el('span', 'case-label', '實際情境'));
+          box.appendChild(el('p', null, question.scenario));
+          section.appendChild(box);
+        }
+
+        var fieldset = document.createElement('fieldset');
+        fieldset.appendChild(el('legend', null, '請選擇一個答案'));
+        (question.options || []).forEach(function (option) {
+          var label = el('label', 'option');
+          var input = document.createElement('input');
+          input.type = 'radio';
+          input.name = question.id;
+          input.value = optionLabel(option);
+          label.appendChild(input);
+
+          var body = document.createElement('span');
+          var title = el('span', 'option-title');
+          title.appendChild(el('span', 'option-key', option.key));
+          title.appendChild(document.createTextNode(option.title));
+          if (question.recommendation && option.key === question.recommendation) {
+            title.appendChild(el('span', 'recommendation', '我的建議'));
+          }
+          body.appendChild(title);
+          if (option.note) body.appendChild(el('span', 'option-note', option.note));
+          label.appendChild(body);
+          fieldset.appendChild(label);
+        });
+        section.appendChild(fieldset);
+
+        var noteWrap = el('div', 'note-wrap');
+        var noteId = 'note-' + question.id;
+        var noteLabel = el('label', 'note-label', '補充說明（可不填）');
+        noteLabel.setAttribute('for', noteId);
+        var textarea = document.createElement('textarea');
+        textarea.id = noteId;
+        textarea.setAttribute('data-note', question.id);
+        textarea.placeholder = '可以補充實務限制、例外或團隊已有的決定';
+        noteWrap.appendChild(noteLabel);
+        noteWrap.appendChild(textarea);
+        section.appendChild(noteWrap);
+
+        return section;
+      }
+
+      function sectionOf(id) {
+        return document.querySelector('.question[data-q="' + id + '"]');
+      }
+
+      function selected(id) {
+        var radio = document.querySelector('input[name="' + id + '"]:checked');
         return radio ? radio.value : '';
       }
 
-      function note(section) {
-        var field = section.querySelector('textarea[data-note]');
+      function note(id) {
+        var field = document.querySelector('textarea[data-note="' + id + '"]');
         return field ? field.value.trim() : '';
+      }
+
+      // Safari can refuse localStorage on file:// URLs, and the questionnaire is
+      // always opened as a file. Losing a half-finished answer set silently is worse
+      // than not persisting it, so probe once and say so on the page.
+      function storageWorks() {
+        try {
+          localStorage.setItem('__grill_probe__', '1');
+          localStorage.removeItem('__grill_probe__');
+          return true;
+        } catch (e) {
+          return false;
+        }
       }
 
       function save() {
         var data = { answers: {}, notes: {} };
-        questions().forEach(function (section) {
-          var id = section.getAttribute('data-q');
-          var answer = selected(section);
-          var extra = note(section);
-          if (answer) data.answers[id] = answer;
-          if (extra) data.notes[id] = extra;
+        QUESTIONS.forEach(function (question) {
+          var answer = selected(question.id);
+          var extra = note(question.id);
+          if (answer) data.answers[question.id] = answer;
+          if (extra) data.notes[question.id] = extra;
         });
         try { localStorage.setItem(storageKey, JSON.stringify(data)); } catch (e) {}
       }
@@ -243,76 +476,24 @@
         if (!raw) return;
         var data;
         try { data = JSON.parse(raw); } catch (e) { return; }
-        questions().forEach(function (section) {
-          var id = section.getAttribute('data-q');
-          var answer = data.answers && data.answers[id];
+        QUESTIONS.forEach(function (question) {
+          var answer = data.answers && data.answers[question.id];
           if (answer) {
-            Array.prototype.forEach.call(section.querySelectorAll('input[type="radio"]'), function (radio) {
-              radio.checked = radio.value === answer;
-            });
+            Array.prototype.forEach.call(
+              document.querySelectorAll('input[name="' + question.id + '"]'),
+              function (radio) { radio.checked = radio.value === answer; }
+            );
           }
-          var field = section.querySelector('textarea[data-note]');
-          if (field && data.notes && data.notes[id]) field.value = data.notes[id];
+          var field = document.querySelector('textarea[data-note="' + question.id + '"]');
+          if (field && data.notes && data.notes[question.id]) field.value = data.notes[question.id];
         });
       }
 
       function progress() {
-        var list = questions();
-        var answered = list.filter(function (section) { return !!selected(section); }).length;
-        var counter = document.getElementById('counter');
-        var fill = document.getElementById('fill');
-        if (counter) counter.textContent = '已回答 ' + answered + ' / ' + list.length;
-        if (fill) fill.style.width = (list.length ? answered / list.length * 100 : 0) + '%';
-      }
-
-      function generate() {
-        var heading = document.querySelector('h1');
-        var topic = heading ? heading.textContent.trim() : document.title;
-        var lines = [
-          '請根據以下 Matt grill 問卷回覆繼續處理。',
-          '',
-          '【問卷主題】' + topic,
-          '',
-          '【決策回覆】'
-        ];
-        var missing = [];
-
-        questions().forEach(function (section) {
-          var id = section.getAttribute('data-q') || 'q?';
-          var titleElement = section.querySelector('h3');
-          var title = section.getAttribute('data-title') || (titleElement ? titleElement.textContent.trim() : id);
-          var answer = selected(section);
-          var extra = note(section);
-          var required = section.getAttribute('data-required') !== 'false';
-          var recommendation = section.getAttribute('data-recommendation') || '';
-
-          lines.push(id.toUpperCase() + '｜' + title);
-          if (answer) {
-            lines.push('     選擇：' + answer);
-          } else if (!required && recommendation) {
-            lines.push('     未回答：採用頁面建議「' + recommendation + '」');
-          } else {
-            lines.push('     未回答：請先確認，不要自行假設');
-            if (required) missing.push(id.toUpperCase());
-          }
-          if (extra) lines.push('     補充：' + extra.replace(/\n/g, '\n            '));
-          lines.push('');
-        });
-
-        lines.push('【回覆規則】');
-        lines.push('1. 將上面已選擇的答案與補充說明視為本輪已確認決策。');
-        lines.push('2. 未回答的必要決策先保留，不要自行猜測或開始依該決策實作。');
-        if (missing.length) {
-          lines.push('3. 仍待確認：' + missing.join('、') + '。');
-        } else {
-          lines.push('3. 必要決策已回答完畢；請摘要採用的決策、指出風險，並繼續原本的 Matt workflow。');
-        }
-
-        var output = document.getElementById('summary');
-        var status = document.getElementById('status');
-        output.value = lines.join('\n').trim();
-        status.textContent = missing.length ? '尚有必答題：' + missing.join('、') + '。可以先複製草稿，或回來補完後再複製。' : '必要決策已完成。複製後貼回原本的對話即可。';
-        status.className = missing.length ? 'status missing' : 'status';
+        var answered = QUESTIONS.filter(function (question) { return !!selected(question.id); }).length;
+        document.getElementById('counter').textContent = '已回答 ' + answered + ' / ' + QUESTIONS.length;
+        document.getElementById('fill').style.width =
+          (QUESTIONS.length ? answered / QUESTIONS.length * 100 : 0) + '%';
       }
 
       function setStatus(message, missing) {
@@ -320,6 +501,67 @@
         status.textContent = message;
         status.className = missing ? 'status missing' : 'status';
       }
+
+      function generate() {
+        var lines = [
+          '請根據以下 Matt grill 問卷回覆繼續處理。',
+          '',
+          '【問卷主題】' + (DATA.title || document.title),
+          '',
+          '【決策回覆】'
+        ];
+        var pendingRequired = [];
+        var pendingOptional = [];
+
+        QUESTIONS.forEach(function (question) {
+          var id = String(question.id).toUpperCase();
+          var answer = selected(question.id);
+          var extra = note(question.id);
+          var required = question.required !== false;
+          var recommended = recommendedOption(question);
+
+          lines.push(id + '｜' + question.title);
+          if (answer) {
+            lines.push('     選擇：' + answer);
+          } else if (extra) {
+            lines.push('     未選擇選項：請依下方補充說明判斷，不要逕自套用頁面建議');
+          } else {
+            lines.push('     未回答：待確認，不要自行假設'
+              + (recommended ? '（頁面建議為「' + optionLabel(recommended) + '」，需使用者確認才算數）' : ''));
+            if (required) pendingRequired.push(id); else pendingOptional.push(id);
+          }
+          if (extra) lines.push('     補充：' + extra.replace(/\n/g, '\n            '));
+          lines.push('');
+        });
+
+        var pending = pendingRequired.concat(pendingOptional);
+        lines.push('【回覆規則】');
+        lines.push('1. 將上面已選擇的答案與補充說明視為本輪已確認決策。');
+        lines.push('2. 完全留白的題目一律視為待確認。頁面建議只是建議，未經使用者確認不得直接採用，也不要替使用者決定。');
+        if (pending.length) {
+          lines.push('3. 仍待確認：'
+            + (pendingRequired.length ? '必答 ' + pendingRequired.join('、') : '')
+            + (pendingRequired.length && pendingOptional.length ? '；' : '')
+            + (pendingOptional.length ? '選答 ' + pendingOptional.join('、') : '')
+            + '。請先向使用者確認這些項目（可一次詢問是否採用頁面建議），確認後再繼續原本的 Matt workflow。');
+        } else {
+          lines.push('3. 所有題目都已表態；請摘要採用的決策、指出風險，並繼續原本的 Matt workflow。');
+        }
+
+        document.getElementById('summary').value = lines.join('\n').trim();
+        setStatus(
+          pending.length
+            ? '尚有 ' + pending.length + ' 題留白（' + pending.join('、') + '），會被標成待確認。可以先複製草稿，或回來補完後再複製。'
+            : '所有題目都已表態。複製後貼回原本的對話即可。',
+          pending.length > 0
+        );
+      }
+
+      renderHead();
+      var main = document.getElementById('questions');
+      QUESTIONS.forEach(function (question, index) {
+        main.appendChild(renderQuestion(question, index));
+      });
 
       document.addEventListener('change', function (event) {
         if (event.target.matches('input[type="radio"]')) { save(); progress(); }
@@ -333,9 +575,10 @@
         if (!output.value) generate();
         var text = output.value;
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(function () {
-            setStatus('已複製回復 prompt，貼回原本的對話即可。', false);
-          }, function () { setStatus('自動複製失敗，請手動選取回復 prompt。', true); });
+          navigator.clipboard.writeText(text).then(
+            function () { setStatus('已複製回復 prompt，貼回原本的對話即可。', false); },
+            function () { setStatus('自動複製失敗，請手動選取回復 prompt。', true); }
+          );
           return;
         }
         output.removeAttribute('readonly');
@@ -346,9 +589,12 @@
         setStatus(ok ? '已複製回復 prompt，貼回原本的對話即可。' : '複製失敗，請手動選取回復 prompt。', !ok);
       });
       document.getElementById('reset').addEventListener('click', function () {
-        questions().forEach(function (section) {
-          Array.prototype.forEach.call(section.querySelectorAll('input[type="radio"]'), function (radio) { radio.checked = false; });
-          var field = section.querySelector('textarea[data-note]');
+        QUESTIONS.forEach(function (question) {
+          Array.prototype.forEach.call(
+            document.querySelectorAll('input[name="' + question.id + '"]'),
+            function (radio) { radio.checked = false; }
+          );
+          var field = document.querySelector('textarea[data-note="' + question.id + '"]');
           if (field) field.value = '';
         });
         document.getElementById('summary').value = '';
@@ -357,7 +603,7 @@
         progress();
       });
 
-      restore();
+      if (storageWorks()) restore(); else document.getElementById('no-persist').hidden = false;
       progress();
     })();
   </script>
